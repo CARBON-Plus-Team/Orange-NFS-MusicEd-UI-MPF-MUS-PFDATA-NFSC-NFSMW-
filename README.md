@@ -75,7 +75,7 @@ Version: 1.0.0 | Author: Shynian (信源)
 
 ## Acknowledgments
 
-This software stands on the shoulders of the following projects and individuals who made NFS Carbon music modding possible:
+This software stands on the shoulders of the following projects and individuals who made NFSC/MW music modding possible:
 
 ### PFDataCompiler Contributors
 
@@ -235,7 +235,7 @@ SOFTWARE.
 
 ## 鸣谢
 
-本软件的诞生离不开以下项目和个人的贡献，是他们让 NFS Carbon 的音乐 Modding 成为可能：
+本软件的诞生离不开以下项目和个人的贡献，是他们让 NFSC/MW 的音乐 Modding 成为可能：
 
 ### PFDataCompiler 贡献者
 
