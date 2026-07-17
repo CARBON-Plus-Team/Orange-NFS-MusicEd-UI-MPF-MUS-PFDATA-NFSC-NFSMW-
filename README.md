@@ -71,12 +71,6 @@ Version: 1.0.0 | Author: Shynian (信源)
 | ASF | EA SCHL/XA compressed audio stream | Read/Write |
 | WAV | Uncompressed PCM audio (44100Hz, 16-bit) | Read/Write |
 
-## Configuration
-
-- Format: INI via QSettings
-- Location: `%APPDATA%\NFSMusicEd\settings.ini`
-- Stores: Last MUS file path, language preference
-
 ---
 
 ## Acknowledgments
@@ -236,12 +230,6 @@ SOFTWARE.
 | MPF | NFS Carbon 音乐补丁文件 | 读/写 |
 | ASF | EA SCHL/XA 压缩音频流 | 读/写 |
 | WAV | 未压缩 PCM 音频（44100Hz, 16-bit） | 读/写 |
-
-## 配置存储
-
-- 格式：INI（通过 QSettings）
-- 位置：`%APPDATA%\NFSMusicEd\settings.ini`
-- 存储内容：上次选择的 MUS 文件路径、语言偏好
 
 ---
 
