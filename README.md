@@ -100,7 +100,7 @@ This software stands on the shoulders of the following projects and individuals 
 
 ### Community
 
-- The **BlackBox Need For Speed community** for keeping Need for Speed Carbon alive through decades of modding passion.
+- The **BlackBox Need For Speed community** for keeping Need for Speed alive through decades of modding passion.
 
 ---
 
