@@ -1,6 +1,6 @@
 # Orange NFS MusicEd UI By: Shynian
 
-Need for Speed Carbon Music Editor
+Need for Speed Carbon/MostWanted Music Editor
 Version: 1.0.0 | Author: Shynian (信源)
 
 <img width="256" height="256" alt="atgki-szyi5" src="https://github.com/user-attachments/assets/6abb763f-9d60-4539-9dd7-bf9213a87f4d" />
