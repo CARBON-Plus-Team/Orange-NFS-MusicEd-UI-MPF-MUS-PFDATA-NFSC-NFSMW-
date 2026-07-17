@@ -10,6 +10,21 @@ Author: Shynian (信源)
 
 # English Version
 
+## Workflow Guide📕
+Follow these steps to extract, edit, and repack music files:
+
+##### Step 1: Extract ASF from MUS 　　Click Select MUS File to choose your .mus file. The software will automatically find the matching .mpf file. Then click Extract ASF to unpack all audio files from the MUS archive.
+
+##### Step 2: Convert ASF to WAV 　　In the Extracted Files panel, click Convert All to WAV to convert all ASF files to WAV format. You can then play, edit, or replace WAV files with your own music.
+
+##### Step 3: Replace Music (optional) 　　Select a WAV file in the list, click Replace Music, and choose your own WAV file (44100 Hz, 16-bit recommended). The selected file will be replaced.
+
+##### Step 4: Convert WAV back to ASF 　　After editing, click Convert to ASF to convert all WAV files back to ASF format. Make sure all files are converted before packing.
+
+##### Step 5: Pack back to MUS 　　Click Convert to MUS to repack all ASF files back into MUS/MPF format. The original MUS/MPF files will be automatically overwritten. Before overwriting, the original files are backed up with timestamps to the MusBackUp folder located in the same directory as your MUS/MPF files.
+
+##### Note: Original MUS/MPF files are automatically backed up to the MusBackUp folder (located in the same folder as your MUS/MPF files) before being overwritten. Backups are timestamped (yyyyMMdd_hhmmss format) so multiple versions are preserved. If backup fails due to permission issues, the overwrite will still proceed.
+
 ## Programming Languages
 
 - **C++** (C++17 standard) — Primary application language
@@ -151,6 +166,24 @@ SOFTWARE.
 ---
 
 # 中文版本
+
+
+## 操作流程指南📕
+
+##### 按照以下步骤提取、编辑和重新打包音乐文件：
+
+##### 第一步：从 MUS 中提取 ASF 　　点击"选择 MUS 文件"来选择您的 .mus 文件。软件会自动找到匹配的 .mpf 文件。然后点击"提取 ASF"来从 MUS 存档中解包所有音频文件。
+
+##### 第二步：将 ASF 转换为 WAV 　　在"提取的文件"面板中，点击"全部转换为 WAV"将所有 ASF 文件转换为 WAV 格式。然后您可以播放、编辑或用您自己的音乐替换 WAV 文件。
+
+##### 第三步：替换音乐（可选） 　　在列表中选择一个 WAV 文件，点击"替换音乐"，然后选择您自己的 WAV 文件（推荐 44100 Hz、16 位）。选中的文件将被替换。
+
+##### 第四步：将 WAV 转换回 ASF 　　编辑完成后，点击"转换为 ASF"将所有 WAV 文件转换回 ASF 格式。确保在打包前所有文件都已转换。
+
+##### 第五步：打包回 MUS 　　点击"转换为 MUS"将所有 ASF 文件重新打包为 MUS/MPF 格式。原始 MUS/MPF 文件将被自动覆盖。覆盖前，原始文件会以时间戳命名备份到 MUS/MPF 文件所在目录下的 MusBackUp 文件夹中。
+
+##### 注意： 原始 MUS/MPF 文件在被覆盖前会自动备份到 MusBackUp 文件夹（位于 MUS/MPF 文件所在的同一目录下）。备份文件带有时间戳（格式为 yyyyMMdd_hhmmss），可以保留多个版本。如果因权限问题备份失败，覆盖操作仍会继续执行。
+
 
 ## 编程语言
 
