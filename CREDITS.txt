@@ -180,6 +180,10 @@ property of their respective owners.
 Users are responsible for ensuring they legally own a copy of Need for
 Speed: Carbon before using this tool to modify game files.
 
+[Risk Disclaimer]
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. THE USER ASSUMES THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE, INCLUDING BUT NOT LIMITED TO SAVE FILE CORRUPTION, DATA LOSS, AND SYSTEM MALFUNCTION. IN NO EVENT SHALL THE DEVELOPER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, OR PUNITIVE DAMAGES (INCLUDING, BUT NOT LIMITED TO, LOSS OF PROFITS OR DATA RECOVERY COSTS) ARISING FROM THE USE OF OR INABILITY TO USE THIS SOFTWARE. CONTINUED USE CONSTITUTES AN EXPRESS WAIVER OF ANY CLAIM FOR PUNITIVE DAMAGES.
+
 [Third-Party Licenses]
 
   - MPFmaster.exe and MPFmaster_GenerateEvent.exe are distributed under
@@ -389,6 +393,10 @@ Canada、EA Black Box 或其任何子公司/合作伙伴无任何关联，也不
 
 用户有责任确保在使用本工具修改游戏文件之前合法拥有 Need for Speed:
 Carbon 的副本。
+
+[风险免责书]
+
+本软件按“现状”提供，使用者须自行承担包括但不限于存档损坏、数据丢失、系统异常等全部固有风险；在适用法律允许的最大范围内，开发者不对因使用或无法使用本软件所产生的任何直接、间接、附带、衍生或惩罚性损害（含利润损失、数据恢复成本等）承担任何赔偿责任，继续操作即视为你明示放弃就此主张任何惩罚性赔偿之权利。
 
 【第三方许可证】
 
