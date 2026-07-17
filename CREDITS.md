@@ -1,7 +1,10 @@
 # Orange NFS MusicEd UI By: Shynian
 
-Need for Speed Carbon Music Editor
+Need for Speed Carbon/MostWanted Music Editor
 Version: 1.0.0 | Author: Shynian (信源)
+
+<img width="256" height="256" alt="atgki-szyi5" src="https://github.com/user-attachments/assets/6abb763f-9d60-4539-9dd7-bf9213a87f4d" />
+
 
 ---
 
@@ -72,7 +75,7 @@ Version: 1.0.0 | Author: Shynian (信源)
 
 ## Acknowledgments
 
-This software stands on the shoulders of the following projects and individuals who made NFS Carbon music modding possible:
+This software stands on the shoulders of the following projects and individuals who made NFSC/MW music modding possible:
 
 ### PFDataCompiler Contributors
 
@@ -93,7 +96,7 @@ This software stands on the shoulders of the following projects and individuals 
 
 ### Third-Party Tools
 
-- The unknown authors of **sx.exe** (Sound eXchange / EA XA converter) .
+- The unknown authors of **sx.exe** (Sound eXchange / EA XA converter).
 
 ### Community
 
@@ -130,6 +133,10 @@ SOFTWARE.
 This software is a fan-made tool for creating modifications ("mods") for the game Need for Speed: Carbon. It is NOT affiliated with, endorsed by, or approved by Electronic Arts Inc. (EA), EA Canada, EA Black Box, or any of their subsidiaries or partners. All trademarks referenced — including Need for Speed, NFS Carbon, EA, Black Box, and any associated logos — are the property of their respective owners.
 
 Users are responsible for ensuring they legally own a copy of Need for Speed: Carbon before using this tool to modify game files.
+
+### Risk Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. THE USER ASSUMES THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE, INCLUDING BUT NOT LIMITED TO SAVE FILE CORRUPTION, DATA LOSS, AND SYSTEM MALFUNCTION. IN NO EVENT SHALL THE DEVELOPER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, OR PUNITIVE DAMAGES (INCLUDING, BUT NOT LIMITED TO, LOSS OF PROFITS OR DATA RECOVERY COSTS) ARISING FROM THE USE OF OR INABILITY TO USE THIS SOFTWARE. CONTINUED USE CONSTITUTES AN EXPRESS WAIVER OF ANY CLAIM FOR PUNITIVE DAMAGES.
 
 ### Third-Party Licenses
 
@@ -232,7 +239,7 @@ SOFTWARE.
 
 ## 鸣谢
 
-本软件的诞生离不开以下项目和个人的贡献，是他们让 NFS Carbon 的音乐 Modding 成为可能：
+本软件的诞生离不开以下项目和个人的贡献，是他们让 NFSC/MW 的音乐 Modding 成为可能：
 
 ### PFDataCompiler 贡献者
 
@@ -290,6 +297,11 @@ SOFTWARE.
 本软件是为极品飞车：卡本峡谷（Need for Speed: Carbon）游戏创建修改（Mod）的非官方粉丝工具。本软件与 Electronic Arts Inc.（EA）、EA Canada、EA Black Box 或其任何子公司/合作伙伴无任何关联，也不受其认可或批准。所有提及的商标——包括 Need for Speed、NFS Carbon、EA、Black Box 及相关标志——均为其各自所有者的财产。
 
 用户有责任确保在使用本工具修改游戏文件之前合法拥有 Need for Speed: Carbon 的副本。
+
+
+### 风险免责书
+
+本软件按“现状”提供，使用者须自行承担包括但不限于存档损坏、数据丢失、系统异常等全部固有风险；在适用法律允许的最大范围内，开发者不对因使用或无法使用本软件所产生的任何直接、间接、附带、衍生或惩罚性损害（含利润损失、数据恢复成本等）承担任何赔偿责任，继续操作即视为你明示放弃就此主张任何惩罚性赔偿之权利。
 
 ### 第三方许可证
 
