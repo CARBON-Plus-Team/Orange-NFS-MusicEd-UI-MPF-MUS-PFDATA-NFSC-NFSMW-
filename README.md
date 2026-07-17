@@ -5,8 +5,8 @@ Author: Shynian (信源)
 
 <img width="256" height="256" alt="atgki-szyi5" src="https://github.com/user-attachments/assets/6abb763f-9d60-4539-9dd7-bf9213a87f4d" />
 
-##### A special thank you to YAMADA-RYO. He’s someone I deeply cherish, and I’m so grateful for his help with ONME. Having him in my corner means the world.
-##### 我想特别感谢一下 YAMADA-RYO。他是我所珍视的人，也非常感谢他在 ONME​ 项目上的鼎力相助。能有他在身后支持，对我来说意义非凡。
+##### A special thank you to YAMADA RYO. He’s someone I deeply cherish, and I’m so grateful for his help with ONME. Having him in my corner means the world.
+##### 我想特别感谢一下 YAMADA RYO。他是我所珍视的人，也非常感谢他在 ONME​ 项目上的鼎力相助。能有他在身后支持，对我来说意义非凡。
 
 ---
 
