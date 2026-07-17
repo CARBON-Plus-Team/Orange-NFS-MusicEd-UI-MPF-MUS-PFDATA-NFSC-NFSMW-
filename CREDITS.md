@@ -99,7 +99,7 @@ This software stands on the shoulders of the following projects and individuals 
 
 ### Third-Party Tools
 
-- The unknown authors of **sx.exe** (Sound eXchange / EA XA converter) — a legacy audio conversion tool originally distributed with NHL 07 modding utilities.
+- The unknown authors of **sx.exe** (Sound eXchange / EA XA converter) .
 
 ### Community
 
@@ -265,7 +265,7 @@ SOFTWARE.
 
 ### 第三方工具
 
-- **sx.exe**（Sound eXchange / EA XA 转换器）的未知作者 — 一款最初随 NHL 07 Modding 工具分发的传统音频转换工具。
+- **sx.exe**（Sound eXchange / EA XA 转换器）。
 
 ### 社区
 
