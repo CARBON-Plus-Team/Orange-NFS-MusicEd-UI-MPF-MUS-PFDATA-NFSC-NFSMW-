@@ -125,9 +125,9 @@ This software stands on the shoulders of the following projects and individuals 
 
 ### Fan-Tool Disclaimer
 
-This software is a fan-made tool for creating modifications ("mods") for the game Need for Speed. It is NOT affiliated with, endorsed by, or approved by Electronic Arts Inc. (EA), EA Canada, EA Black Box, or any of their subsidiaries or partners. All trademarks referenced — including Need for Speed, NFS Carbon, EA, Black Box, and any associated logos — are the property of their respective owners.
+This software is a fan-made tool for creating modifications ("mods") for the game Need for Speed. It is NOT affiliated with, endorsed by, or approved by Electronic Arts Inc. (EA), EA Canada, EA Black Box, or any of their subsidiaries or partners. All trademarks referenced — including Need for Speed,EA, Black Box, and any associated logos — are the property of their respective owners.
 
-Users are responsible for ensuring they legally own a copy of Need for Speed: Carbon before using this tool to modify game files.
+Users are responsible for ensuring they legally own a copy of Need for Speed before using this tool to modify game files.
 
 ### Risk Disclaimer
 
@@ -277,7 +277,7 @@ SOFTWARE.
 
 ### 社区
 
-- **BlackBox Need For Speed 社区**，数十年的 Modding 热情让极品飞车 Carbon 保持活力。
+- **BlackBox Need For Speed 社区**，数十年的 Modding 热情让极品飞车保持活力。
 
 ---
 
@@ -285,9 +285,9 @@ SOFTWARE.
 
 ### 粉丝工具免责声明
 
-本软件是为极品飞车（Need for Speed）游戏创建修改（Mod）的非官方粉丝工具。本软件与 Electronic Arts Inc.（EA）、EA Canada、EA Black Box 或其任何子公司/合作伙伴无任何关联，也不受其认可或批准。所有提及的商标——包括 Need for Speed、NFS Carbon、EA、Black Box 及相关标志——均为其各自所有者的财产。
+本软件是为极品飞车（Need for Speed）游戏创建修改（Mod）的非官方粉丝工具。本软件与 Electronic Arts Inc.（EA）、EA Canada、EA Black Box 或其任何子公司/合作伙伴无任何关联，也不受其认可或批准。所有提及的商标——包括 Need for Speed、EA、Black Box 及相关标志——均为其各自所有者的财产。
 
-用户有责任确保在使用本工具修改游戏文件之前合法拥有 Need for Speed: Carbon 的副本。
+用户有责任确保在使用本工具修改游戏文件之前合法拥有 Need for Speed 的副本。
 
 
 ### 风险免责书
