@@ -7,10 +7,6 @@
 
 ## <p align="center"><img width="854" height="480" alt="Orange" src="https://github.com/user-attachments/assets/ba0ad306-200d-4bda-8f6d-30b1aa09f20c" /></p>
 
-
-##### <p align="center">A special thank you to **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**. He’s someone I deeply cherish, and I’m so grateful for his help with ONME.</p> 
-##### <p align="center">我想特别感谢一下 **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**。他是我所珍视的人，也非常感谢他在 ONME​ 项目上的鼎力相助。</p>
-
 ---
 
 # English Version
@@ -94,6 +90,8 @@ Follow these steps to extract, edit, and repack music files:
 ---
 
 ## Acknowledgments
+
+##### <p align="center">A special thank you to **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**. He’s someone I deeply cherish, and I’m so grateful for his help with ONME.</p> 
 
 This software stands on the shoulders of the following projects and individuals who made NFSC/MW music modding possible:
 
@@ -256,6 +254,8 @@ SOFTWARE.
 ## 鸣谢
 
 本软件的诞生离不开以下项目和个人的贡献，是他们让 NFSC/MW 的音乐 Modding 成为可能：
+
+##### <p align="center">我想特别感谢一下 **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**。他是我所珍视的人，也非常感谢他在 ONME​ 项目上的鼎力相助。</p>
 
 ### PFDataCompiler 贡献者
 
