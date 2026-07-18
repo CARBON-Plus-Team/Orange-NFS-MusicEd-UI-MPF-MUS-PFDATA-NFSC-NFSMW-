@@ -48,37 +48,21 @@ int main(int argc, char *argv[])
     app.setStyle(QStyleFactory::create("Fusion"));
 
     QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
     QString appDataDir = appDataLocation + "/NFSMusicEd";
-
     QDir appDataDirObj(appDataDir);
 
-    QDir parentDir(appDataLocation);
-    QFileInfo parentDirInfo(parentDir.absolutePath());
-
     if (!appDataDirObj.exists()) {
-        bool success = appDataDirObj.mkpath(".");
-
-        if (!success) {
-
+        if (!appDataDirObj.mkpath(".")) {
             QString docsDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/NFSMusicEd";
-
             QDir docsDirObj(docsDir);
-            if (!docsDirObj.exists()) {
-                bool docsSuccess = docsDirObj.mkpath(".");
-
-                if (docsSuccess) {
-
-                    appDataDir = docsDir;
-                } else {
-                    qCritical() << "Failed to create application data directory:" << appDataDir;
-                    qCritical() << "Also failed to create in Documents directory:" << docsDir;
-                    QMessageBox::critical(nullptr, "Fatal Error",
-                                          "Failed to create application data directory. Application cannot start." + 
-                                          QString("\n\nDetails:\nAppDataLocation: %1\nDocsLocation: %2").arg(appDataLocation, docsDir));
-                    return -1;
-                }
+            if (!docsDirObj.exists() && !docsDirObj.mkpath(".")) {
+                qCritical() << "Failed to create app data directory:" << appDataDir;
+                QMessageBox::critical(nullptr, "Fatal Error",
+                    QString("Failed to create application data directory.\n\nAppDataLocation: %1\nDocsLocation: %2")
+                        .arg(appDataLocation, docsDir));
+                return -1;
             }
+            appDataDir = docsDir;
         }
     }
 
@@ -148,6 +132,10 @@ int main(int argc, char *argv[])
         window.raise();
         window.activateWindow();
 
+        qDebug() << "Application started successfully";
+        qDebug() << "Application directory:" << QApplication::applicationDirPath();
+        qDebug() << "Temp directory:" << tempDir;
+        qDebug() << "App data directory:" << appDataDir;
 
         int result = app.exec();
 
@@ -157,6 +145,7 @@ int main(int argc, char *argv[])
         }
 #endif
 
+        qDebug() << "Application exited with code:" << result;
         return result;
 
     } catch (const std::exception& e) {

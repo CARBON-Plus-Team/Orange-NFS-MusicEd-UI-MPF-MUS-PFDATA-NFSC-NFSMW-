@@ -42,8 +42,6 @@ private slots:
     void onSelectMusFile();
     void onExtractMusicFiles();
     void onConvertAllASF();
-    void onOneClickFullConvert();
-    void onConvertSingleASFtoWAV();
     void onPlaySelected();
     void onStopPlayback();
     void onReplaceMusic();
@@ -67,8 +65,7 @@ private slots:
     void onConversionProgressCanceled();
 
     void onLanguageChanged(int index);
-    void onAsfFileSelected(QListWidgetItem *item);
-    void onWavFileSelected(QListWidgetItem *item);
+    void onFileSelected(QListWidgetItem *item);
     void onVolumeChanged(int volume);
 
     void onProgressSliderMoved(int position);
@@ -137,14 +134,10 @@ private:
     QPushButton *selectMusButton;
     QLabel *selectedFileLabel;
     QPushButton *extractButton;
-    QPushButton *oneClickConvertButton;
-    QPushButton *singleConvertButton;
     QLabel *languageLabel;
     QComboBox *languageComboBox;
 
     QListWidget *fileListWidget;
-    QListWidget *asfListWidget;
-    QListWidget *wavListWidget;
     QPushButton *convertAllButton;
     QPushButton *playButton;
     QPushButton *stopButton;
@@ -175,7 +168,6 @@ private:
     QProgressDialog *conversionProgressDialog;
     QProgressDialog *unpackProgressDialog;
     QTranslator *appTranslator;
-    QTranslator *qtTranslator;
     QStringList pendingGenerateEventFiles;
     QString currentGenerateEventFile;
     QString currentGenerateEventIdentifier;
@@ -197,8 +189,6 @@ private:
     bool isConverting;
     bool isPlaying;
     bool shouldOverwriteFiles;
-    bool isOneClickMode;
-    QString singleConvertFileName;
     bool hasShownExportComplete;
 };
 

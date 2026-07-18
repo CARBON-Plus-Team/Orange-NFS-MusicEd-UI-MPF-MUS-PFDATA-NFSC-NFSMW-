@@ -1,9 +1,9 @@
-; Script generated for Orange NFS MusicEd UI
-; 橘子极品飞车音乐编辑器安装包
+﻿; Script generated for Orange NFS MusicEd UI
+; Orange NFS Music Editor Installer
 
 #define MyAppName "Orange NFS MusicEd UI"
 #define MyAppVersion "1.0"
-#define MyAppPublisher "25H SimRacing Club"
+#define MyAppPublisher "Shynian"
 #define MyAppExeName "Orange NFS MusicEd UI.exe"
 #define MyAppSourceDir "c:\Users\Shynian\Documents\source\音乐编辑器\TEST"
 #define MyOutputDir "c:\Users\Shynian\Documents\source\音乐编辑器"
@@ -23,7 +23,7 @@ OutputBaseFilename={#MyOutputBaseFilename}
 Compression=lzma2/ultra
 SolidCompression=yes
 WizardStyle=modern
-PrivilegesRequired=admin
+PrivilegesRequired=lowest
 ArchitecturesInstallIn64BitMode=x64compatible
 ArchitecturesAllowed=x64compatible
 
@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "{#MyAppSourceDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyAppSourceDir}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyAppSourceDir}\vc_redist.x64.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyAppSourceDir}\tools\*"; DestDir: "{app}\tools"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyAppSourceDir}\generic\*"; DestDir: "{app}\generic"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyAppSourceDir}\iconengines\*"; DestDir: "{app}\iconengines"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyAppSourceDir}\imageformats\*"; DestDir: "{app}\imageformats"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -53,17 +53,4 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\vc_redist.x64.exe"; Parameters: "/q /norestart"; StatusMsg: "正在安装 VC++ 运行库..."; Check: NeedInstallVCRedist
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
-[Code]
-function NeedInstallVCRedist: Boolean;
-var
-  Version: String;
-begin
-  Result := True;
-  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Version) then
-  begin
-    Result := False;
-  end;
-end;

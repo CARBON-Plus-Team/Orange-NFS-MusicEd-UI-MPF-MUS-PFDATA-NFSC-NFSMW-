@@ -1,12 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>tools/convert.bat</file>
-        <file>tools/convert_back.bat</file>
-        <file>tools/MPFmaster.exe</file>
-        <file>tools/sx.exe</file>
-        <file>tools/ffmpeg.exe</file>
         <file>translations/musicprocessor_en.qm</file>
         <file>translations/musicprocessor_zh.qm</file>
-        <file>tools/MPFmaster_GenerateEvent.exe</file>
     </qresource>
 </RCC>

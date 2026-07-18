@@ -161,7 +161,7 @@ clang {
     QMAKE_CXXFLAGS += -Wno-unused-parameter
 
     # C++17支持
-    QMAKE_CXXFLAGS += -std=c++17
+    QMAKE_CXXFLAGS += -std:c++17
 }
 
 # 禁用特定警告
@@ -176,7 +176,9 @@ DEFINES += \
 
 # 复制依赖文件到输出目录（Windows）
 win32 {
-    QMAKE_POST_LINK += $$quote(cmd /c windeployqt --release --no-system-d3d-compiler --no-opengl-sw $$shell_path($$DESTDIR/$$TARGET).exe$$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cmd /c if not exist $$shell_path($$DESTDIR/tools) mkdir $$shell_path($$DESTDIR/tools)$$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cmd /c copy /y $$shell_path($$PWD/tools/*) $$shell_path($$DESTDIR/tools/)$$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cmd /c windeployqt --release --no-system-d3d-compiler --no-opengl-sw --no-translations $$shell_path($$DESTDIR/$$TARGET).exe$$escape_expand(\\n\\t))
 }
 
 # 安装后处理
@@ -203,4 +205,3 @@ contains(QT_VERSION, ^5\\.[0-9]+\\.) {
 # 测试配置（可选）
 CONFIG += console
 CONFIG -= app_bundle
-
