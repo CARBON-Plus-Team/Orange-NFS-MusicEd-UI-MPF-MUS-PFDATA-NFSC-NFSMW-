@@ -1,12 +1,12 @@
-# Orange NFS MusicEd UI By: Shynian
+# <p align="center">  Orange NFS MusicEd UI</p>
 
-Need for Speed Carbon/MostWanted Music Editor
-Author: Shynian (信源)
+ <p align="center">Need for Speed Carbon/MostWanted Music Editor</p>
+ <p align="center">Author: Shynian (信源)</p>
 
-<img width="256" height="256" alt="atgki-szyi5" src="https://github.com/user-attachments/assets/6abb763f-9d60-4539-9dd7-bf9213a87f4d" />
+## <p align="center"><img width="256" height="256" alt="atgki-szyi5" src="https://github.com/user-attachments/assets/6abb763f-9d60-4539-9dd7-bf9213a87f4d" /></p>
 
-##### A special thank you to **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**. He’s someone I deeply cherish, and I’m so grateful for his help with ONME. 
-##### 我想特别感谢一下 **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**。他是我所珍视的人，也非常感谢他在 ONME​ 项目上的鼎力相助。
+##### <p align="center">A special thank you to **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**. He’s someone I deeply cherish, and I’m so grateful for his help with ONME.</p> 
+##### <p align="center">我想特别感谢一下 **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**。他是我所珍视的人，也非常感谢他在 ONME​ 项目上的鼎力相助。</p>
 
 ---
 
