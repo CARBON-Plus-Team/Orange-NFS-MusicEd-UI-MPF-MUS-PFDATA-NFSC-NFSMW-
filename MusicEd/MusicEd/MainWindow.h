@@ -42,13 +42,13 @@ private slots:
     void onSelectMusFile();
     void onExtractMusicFiles();
     void onConvertAllASF();
+    void onOneClickFullConvert();
+    void onConvertSingleASFtoWAV();
     void onPlaySelected();
     void onStopPlayback();
     void onReplaceMusic();
     void onConvertToASF();
     void onConvertToMUS();
-    void onConvertSingleASFtoWAV();
-    void onOneClickFullConvert();
     void onBackToMain();
     void onHowToUse();
 
@@ -119,13 +119,6 @@ private:
     void updateConversionProgress(int value, const QString &text = QString());
     void hideConversionProgressDialog();
 
-    void updateExtractButtonText();
-    void updateConvertAllButtonText();
-    void updateSingleConvertButtonText();
-    void updateOneClickConvertButtonText();
-    void updateReplaceButtonText();
-    void updateConvertToMUSButtonText();
-    void updateBackButtonText();
     void updateAsfCountLabel(int count);
     void updateWavCountLabel(int count);
     void updateStatusLabel(const QString &message, bool isError = false);
@@ -144,14 +137,15 @@ private:
     QPushButton *selectMusButton;
     QLabel *selectedFileLabel;
     QPushButton *extractButton;
+    QPushButton *oneClickConvertButton;
+    QPushButton *singleConvertButton;
     QLabel *languageLabel;
     QComboBox *languageComboBox;
 
+    QListWidget *fileListWidget;
     QListWidget *asfListWidget;
     QListWidget *wavListWidget;
     QPushButton *convertAllButton;
-    QPushButton *singleConvertButton;
-    QPushButton *oneClickConvertButton;
     QPushButton *playButton;
     QPushButton *stopButton;
     QPushButton *replaceButton;
@@ -194,21 +188,18 @@ private:
     QString wavDir;
     QString txtDir;
     QString currentPlayingFile;
-    QString singleConvertFileName;
     QString currentLanguage;
     QString currentProcessingMpfFile;
 
     int currentConversionIndex;
     int totalConversions;
     QStringList filesToConvert;
-    bool isOneClickMode;
     bool isConverting;
     bool isPlaying;
     bool shouldOverwriteFiles;
+    bool isOneClickMode;
+    QString singleConvertFileName;
     bool hasShownExportComplete;
 };
 
 #endif
-
-
-

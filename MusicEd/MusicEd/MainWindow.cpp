@@ -305,20 +305,6 @@ void MainWindow::applyDarkOrangeTheme()
             background: #F97316;
             border-radius: 3px;
         }
-        QCheckBox {
-            spacing: 8px;
-        }
-        QCheckBox::indicator {
-            width: 16px;
-            height: 16px;
-            border: 1px solid #CFC2A3;
-            border-radius: 3px;
-            background-color: #FBF7ED;
-        }
-        QCheckBox::indicator:checked {
-            background-color: #F97316;
-            border: 1px solid #F97316;
-        }
         QScrollBar:vertical {
             background: #F5EFE0;
             width: 12px;
@@ -376,36 +362,6 @@ void MainWindow::applyDarkOrangeTheme()
             background-color: #F97316;
             color: #FFFFFF;
         }
-        QHeaderView::section {
-            background-color: #E8DFCC;
-            color: #F97316;
-            padding: 6px;
-            border: none;
-            border-right: 1px solid #F5EFE0;
-            font-weight: bold;
-        }
-        QTabWidget::pane {
-            border: 1px solid #D9CFB8;
-            border-radius: 4px;
-            top: -1px;
-        }
-        QTabBar::tab {
-            background-color: #E8DFCC;
-            border: 1px solid #D9CFB8;
-            border-bottom: none;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            padding: 8px 16px;
-            color: #888877;
-        }
-        QTabBar::tab:selected {
-            background-color: #F5EFE0;
-            color: #F97316;
-            border-bottom: 2px solid #F97316;
-        }
-        QTabBar::tab:hover {
-            color: #2C2C2C;
-        }
         QToolTip {
             background-color: #FBF7ED;
             color: #2C2C2C;
@@ -456,11 +412,11 @@ void MainWindow::setupMainPage()
     selectLayout->addStretch();
 
     extractButton = new QPushButton();
-    updateExtractButtonText();
+    extractButton->setText(tr("Extract ASF Only"));
     extractButton->setEnabled(false);
 
     oneClickConvertButton = new QPushButton();
-    updateOneClickConvertButtonText();
+    oneClickConvertButton->setText(tr("One-Click Full Convert"));
     oneClickConvertButton->setEnabled(false);
     oneClickConvertButton->setStyleSheet(
         "QPushButton {"
@@ -630,11 +586,11 @@ void MainWindow::setupFileManagementPage()
     // 第一行按钮：批量操作
     QHBoxLayout* batchOperationLayout = new QHBoxLayout();
     convertAllButton = new QPushButton();
-    updateConvertAllButtonText();
+    convertAllButton->setText(tr("Convert All to WAV"));
     batchOperationLayout->addWidget(convertAllButton);
     
     convertToMUSButton = new QPushButton();
-    updateConvertToMUSButtonText();
+    convertToMUSButton->setText(tr("Convert to MUS"));
     batchOperationLayout->addWidget(convertToMUSButton);
     
     operationLayout->addLayout(batchOperationLayout);
@@ -650,11 +606,11 @@ void MainWindow::setupFileManagementPage()
     singleOperationLayout->addWidget(stopButton);
     
     replaceButton = new QPushButton();
-    updateReplaceButtonText();
+    replaceButton->setText(tr("Replace Music"));
     singleOperationLayout->addWidget(replaceButton);
     
     singleConvertButton = new QPushButton();
-    updateSingleConvertButtonText();
+    singleConvertButton->setText(tr("Convert Selected ASF to WAV"));
     singleConvertButton->setEnabled(false);
     singleOperationLayout->addWidget(singleConvertButton);
     
@@ -688,7 +644,7 @@ void MainWindow::setupFileManagementPage()
     bottomLayout->addWidget(howToUseButton);
     bottomLayout->addStretch();
     backButton = new QPushButton();
-    updateBackButtonText();
+    backButton->setText(tr("Back to Main"));
     bottomLayout->addWidget(backButton);
     
     managementLayout->addWidget(listGroup);
@@ -776,54 +732,6 @@ void MainWindow::setupConnections()
         this, &MainWindow::onProgressSliderMoved);
 }
 
-void MainWindow::updateExtractButtonText()
-{
-    if (extractButton) {
-        extractButton->setText(tr("Extract ASF Only"));
-    }
-}
-
-void MainWindow::updateOneClickConvertButtonText()
-{
-    if (oneClickConvertButton) {
-        oneClickConvertButton->setText(tr("One-Click Full Convert"));
-    }
-}
-
-void MainWindow::updateSingleConvertButtonText()
-{
-    if (singleConvertButton) {
-        singleConvertButton->setText(tr("Convert Selected ASF to WAV"));
-    }
-}
-
-void MainWindow::updateConvertAllButtonText()
-{
-    if (convertAllButton) {
-        convertAllButton->setText(tr("Convert All to WAV"));
-    }
-}
-
-void MainWindow::updateReplaceButtonText()
-{
-    if (replaceButton) {
-        replaceButton->setText(tr("Replace Music"));
-    }
-}
-
-void MainWindow::updateConvertToMUSButtonText()
-{
-    if (convertToMUSButton) {
-        convertToMUSButton->setText(tr("Convert to MUS"));
-    }
-}
-
-void MainWindow::updateBackButtonText()
-{
-    if (backButton) {
-        backButton->setText(tr("Back to Main"));
-    }
-}
 
 void MainWindow::updateAsfCountLabel(int count)
 {
@@ -897,8 +805,6 @@ void MainWindow::loadLastMusFile()
 
         currentMpfFile = findMatchingMpfFile(lastMus);
         if (!currentMpfFile.isEmpty()) {
-            qDebug() << "Loaded last MUS file:" << lastMus;
-            qDebug() << "Matching MPF file:" << currentMpfFile;
         }
     }
 }
@@ -1096,7 +1002,6 @@ void MainWindow::onDecompileFinished(int exitCode, QProcess::ExitStatus exitStat
 
     if (exitCode == 0) {
         qDebug() << "MPF decompilation completed successfully";
-        qDebug() << "Calling runGenerateEventOnDecompFiles()";
         runGenerateEventOnDecompFiles();
     } else {
         QString errText = QString::fromLocal8Bit(stderrData);
@@ -1109,7 +1014,6 @@ void MainWindow::onDecompileFinished(int exitCode, QProcess::ExitStatus exitStat
     if (decompileProcess) {
         decompileProcess->deleteLater();
         decompileProcess = nullptr;
-        qDebug() << "decompileProcess deleted";
     }
 }
 
@@ -1243,7 +1147,6 @@ void MainWindow::onASFtoWAVConversionFinished(int exitCode, QProcess::ExitStatus
     }
 
     if (senderProcess != conversionProcess) {
-        qDebug() << "Finished signal from old process, ignoring (already handled by error handler)";
         return;
     }
 
@@ -1264,7 +1167,6 @@ void MainWindow::onASFtoWAVConversionFinished(int exitCode, QProcess::ExitStatus
     }
 
     if (success) {
-        qDebug() << "File conversion completed successfully";
         appendLog(tr("Conversion completed successfully"), false);
         currentConversionIndex++;
 
@@ -1404,7 +1306,6 @@ bool MainWindow::copyResourceToTemp(const QString& resourcePath, const QString& 
     }
 
     if (resourceFile.copy(destPath)) {
-        qDebug() << "Copied" << fileName << "to temp directory";
 
 #ifndef Q_OS_WIN
         QFile(destPath).setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
@@ -1487,7 +1388,6 @@ void MainWindow::updateFileList()
         convertToMUSButton->setEnabled(hasAsfFiles && !isConverting);
     }
 
-    qDebug() << "File list updated. WAV files:" << wavFiles.size() << "ASF files:" << asfFiles.size();
 }
 
 bool MainWindow::ensureAsfDirectoryExists()
@@ -1498,7 +1398,6 @@ bool MainWindow::ensureAsfDirectoryExists()
             qWarning() << "Failed to create ASF directory:" << asfDir;
             return false;
         } else {
-            qDebug() << "Created ASF directory:" << asfDir;
         }
     }
     return true;
@@ -1606,7 +1505,6 @@ bool MainWindow::ensureWavDirectoryExists()
     if (!dir.exists(wavDir)) {
         bool created = dir.mkpath(wavDir);
         if (created) {
-            qDebug() << "Created WAV directory:" << wavDir;
         }
         else {
             qWarning() << "Failed to create WAV directory:" << wavDir;
@@ -1622,7 +1520,6 @@ bool MainWindow::ensureTxtDirectoryExists()
     if (!dir.exists(txtDir)) {
         bool created = dir.mkpath(txtDir);
         if (created) {
-            qDebug() << "Created TXT directory:" << txtDir;
         }
         else {
             qWarning() << "Failed to create TXT directory:" << txtDir;
@@ -1700,26 +1597,17 @@ void MainWindow::autoDecompileMpf(const QString& mpfFilePath)
         }
     });
     bool stateChangedConnected = connect(decompileProcess, &QProcess::stateChanged, [this](QProcess::ProcessState newState) {
-        qDebug() << "MPFmaster process state changed:" << newState;
         if (newState == QProcess::Running) {
-            qDebug() << "MPFmaster process is now running...";
-            qDebug() << "Process PID:" << decompileProcess->processId();
         } else if (newState == QProcess::NotRunning) {
-            qDebug() << "MPFmaster process is now not running...";
-            qDebug() << "Process error code:" << decompileProcess->error();
-            qDebug() << "Process error string:" << decompileProcess->errorString();
         } else if (newState == QProcess::Starting) {
-            qDebug() << "MPFmaster process is starting...";
         }
     });
 
-    qDebug() << "Signal connections - finished:" << finishedConnected << "error:" << errorConnected << "stdout:" << stdoutConnected << "stderr:" << stderrConnected << "stateChanged:" << stateChangedConnected;
 
     QStringList arguments;
     arguments << "-d" << mpfBase;
 
     qDebug() << "Starting MPFmaster decompile:" << mpfmasterPath << arguments << "workdir=" << decompileProcess->workingDirectory();
-    qDebug() << "MPF temp path:" << mpfTempPath;
 
     decompileProcess->start(mpfmasterPath, arguments);
 
@@ -1728,12 +1616,9 @@ void MainWindow::autoDecompileMpf(const QString& mpfFilePath)
     
     // 检查进程是否成功启动
     if (started) {
-        qDebug() << "MPFmaster process started successfully with PID:" << decompileProcess->processId();
     } else {
-        qDebug() << "MPFmaster process failed to start with error:" << error;
     }
 
-    qDebug() << "MPFmaster process started:" << started << "Error string:" << decompileProcess->errorString();
 
     if (!started) {
         qWarning() << "Failed to start MPFmaster process:" << decompileProcess->errorString();
@@ -1753,7 +1638,6 @@ void MainWindow::autoDecompileMpf(const QString& mpfFilePath)
     }
 
     qDebug() << "MPFmaster process started successfully. Process ID:" << decompileProcess->processId();
-    qDebug() << "Process state after start:" << decompileProcess->state();
 
     if (mpfDecompileTimer) {
         mpfDecompileTimer->stop();
@@ -2282,19 +2166,19 @@ void MainWindow::retranslateUI()
 {
     setWindowTitle(tr("Orange NFS MusicEd UI By:Shynian"));
 
-    updateExtractButtonText();
-    updateOneClickConvertButtonText();
-    updateSingleConvertButtonText();
-    updateConvertAllButtonText();
-    updateReplaceButtonText();
-    updateConvertToMUSButtonText();
-    updateBackButtonText();
+    extractButton->setText(tr("Extract ASF Only"));
+    oneClickConvertButton->setText(tr("One-Click Full Convert"));
+    singleConvertButton->setText(tr("Convert Selected ASF to WAV"));
+    convertAllButton->setText(tr("Convert All to WAV"));
+    replaceButton->setText(tr("Replace Music"));
+    convertToMUSButton->setText(tr("Convert to MUS"));
+    backButton->setText(tr("Back to Main"));
 
-    if (selectMusButton) selectMusButton->setText(tr("Select MUS File"));
-    if (playButton) playButton->setText(tr("Play"));
-    if (stopButton) stopButton->setText(tr("Stop"));
-    if (convertToASFButton) convertToASFButton->setText(tr("Convert to ASF"));
-    if (selectedFileLabel && currentMusFile.isEmpty())
+    selectMusButton->setText(tr("Select MUS File"));
+    playButton->setText(tr("Play"));
+    stopButton->setText(tr("Stop"));
+    convertToASFButton->setText(tr("Convert to ASF"));
+    if (currentMusFile.isEmpty())
         selectedFileLabel->setText(tr("No file selected"));
 
     QList<QGroupBox*> groupBoxes = findChildren<QGroupBox*>();
@@ -2321,17 +2205,6 @@ void MainWindow::retranslateUI()
         }
     }
 
-    QList<QComboBox*> comboBoxes = findChildren<QComboBox*>();
-    for (QComboBox* comboBox : comboBoxes) {
-        QString originalText = comboBox->property("originalText").toString();
-        if (!originalText.isEmpty()) {
-            if (comboBox->count() > 0) {
-                comboBox->setItemText(0, tr("All Files"));
-                if (comboBox->count() > 1) comboBox->setItemText(1, tr("ASF Files"));
-                if (comboBox->count() > 2) comboBox->setItemText(2, tr("WAV Files"));
-            }
-        }
-    }
 
     // 更新文件计数标签
     QDir asfDirectory(asfDir);
@@ -2616,7 +2489,6 @@ void MainWindow::onWavFileSelected(QListWidgetItem* item)
 
 void MainWindow::runGenerateEventOnDecompFiles()
 {
-    qDebug() << "runGenerateEventOnDecompFiles called";
 
     QString toolPath = tempDir + "/MPFmaster_GenerateEvent.exe";
     if (!QFile::exists(toolPath)) {
@@ -2635,17 +2507,11 @@ void MainWindow::runGenerateEventOnDecompFiles()
     }
 
     QStringList allFiles = d.entryList(QDir::Files);
-    qDebug() << "All files in temp dir:" << allFiles;
 
     pendingGenerateEventFiles = d.entryList(QStringList() << "*_decomp.txt", QDir::Files);
-    qDebug() << "Found" << pendingGenerateEventFiles.count() << "_decomp.txt files:" << pendingGenerateEventFiles;
 
     if (pendingGenerateEventFiles.isEmpty()) {
-        qDebug() << "No _decomp.txt files found in" << tempDir;
 
-        qDebug() << "currentMpfFile:" << currentMpfFile;
-        qDebug() << "currentMusFile:" << currentMusFile;
-        qDebug() << "asfDir:" << asfDir;
 
         if (currentMpfFile.isEmpty() || currentMusFile.isEmpty()) {
             qWarning() << "currentMpfFile or currentMusFile is empty!";
@@ -2698,8 +2564,6 @@ void MainWindow::runGenerateEventOnDecompFiles()
         QStringList arguments;
 
         arguments << "-sa" << mpfBase << musBase << "asf"; // 使用相对路径，因为工作目录已设置为tempDir
-        qDebug() << "ASF directory absolute path:" << asfDir;
-        qDebug() << "Checking if ASF directory exists:" << QDir(asfDir).exists();
 
         QString mpfmasterPath = tempDir + "/MPFmaster.exe";
         if (!QFile::exists(mpfmasterPath)) {
@@ -2710,9 +2574,6 @@ void MainWindow::runGenerateEventOnDecompFiles()
         }
 
         extractProcess->setWorkingDirectory(tempDir);
-        qDebug() << "Extraction working directory:" << tempDir;
-        qDebug() << "MPFmaster path:" << mpfmasterPath;
-        qDebug() << "MPFmaster exists and executable:" << QFile::exists(mpfmasterPath) << "and" << (QFile::permissions(mpfmasterPath) & QFile::ExeUser);
         
         // 添加进度对话框，避免用户感觉程序无响应
         if (unpackProgressDialog) {
@@ -2729,7 +2590,6 @@ void MainWindow::runGenerateEventOnDecompFiles()
         extractProcess->start(mpfmasterPath, arguments);
         qDebug() << "Starting MUS extraction process with PID:" << extractProcess->processId();
         qDebug() << "Extraction arguments:" << arguments;
-        qDebug() << "Starting MUS extraction asynchronously to ASF directory:" << asfDir;
         qDebug() << "Extraction arguments:" << arguments;
         return;
     }
@@ -2751,9 +2611,6 @@ void MainWindow::processNextGenerateEventFile()
 {
     if (pendingGenerateEventFiles.isEmpty()) {
 
-        qDebug() << "All GenerateEvent processes completed successfully! Starting MUS extraction...";
-        qDebug() << "currentMpfFile:" << currentMpfFile;
-        qDebug() << "currentMusFile:" << currentMusFile;
 
         // 确保generateEvent相关的变量已清空
         currentGenerateEventFile = "";
@@ -2808,9 +2665,6 @@ void MainWindow::processNextGenerateEventFile()
         }
 
         extractProcess->setWorkingDirectory(tempDir);
-        qDebug() << "Extraction working directory:" << tempDir;
-        qDebug() << "MPFmaster path:" << mpfmasterPath;
-        qDebug() << "MPFmaster exists and executable:" << QFile::exists(mpfmasterPath) << "and" << (QFile::permissions(mpfmasterPath) & QFile::ExeUser);
         
         // 添加进度对话框，避免用户感觉程序无响应
         if (unpackProgressDialog) {
@@ -2827,7 +2681,6 @@ void MainWindow::processNextGenerateEventFile()
         extractProcess->start(mpfmasterPath, arguments);
         qDebug() << "Starting MUS extraction process with PID:" << extractProcess->processId();
         qDebug() << "Extraction arguments:" << arguments;
-        qDebug() << "Starting MUS extraction asynchronously to ASF directory:" << asfDir;
         return;
     }
 
@@ -2945,7 +2798,6 @@ void MainWindow::checkTools()
             .arg(missing.join("\n")));
     }
     else {
-        qDebug() << "All required tools are present in" << tempDir;
     }
 }
 
@@ -3248,9 +3100,7 @@ void MainWindow::onConvertToMUS()
     QDir d(asfDir);
     QStringList asfs = d.entryList(QStringList() << "*.asf", QDir::Files);
 
-    qDebug() << "Found " << asfs.size() << " ASF files in:" << asfDir;
     if (!asfs.isEmpty()) {
-        qDebug() << "ASF files:" << asfs;
     }
 
     if (asfs.isEmpty()) {
@@ -3284,9 +3134,6 @@ void MainWindow::packAllAsfToMus()
 
     qDebug() << "Current MPF file:" << currentMpfFile;
     qDebug() << "Current MUS file:" << currentMusFile;
-    qDebug() << "MPF temp path:" << mpfTempPath;
-    qDebug() << "MUS temp path:" << musTempPath;
-    qDebug() << "ASF directory:" << asfDir;
 
     QDir musTempDirObj(musTempDir);
     if (!musTempDirObj.exists()) {
@@ -3297,7 +3144,6 @@ void MainWindow::packAllAsfToMus()
     for (const QString& oldFile : oldFiles) {
         QFile::remove(musTempDir + "/" + oldFile);
     }
-    qDebug() << "Cleaned MUS_Temp directory, removed" << oldFiles.size() << "old files";
 
     if (!QFile::copy(currentMpfFile, mpfTempPath)) {
         qWarning() << "Failed to copy MPF to temp:" << currentMpfFile << "->" << mpfTempPath;
@@ -3305,7 +3151,6 @@ void MainWindow::packAllAsfToMus()
         hideConversionProgressDialog();
         return;
     }
-    qDebug() << "Successfully copied MPF to temp:" << mpfTempPath;
 
     if (!QFile::copy(currentMusFile, musTempPath)) {
         qWarning() << "Failed to copy MUS to temp:" << currentMusFile << "->" << musTempPath;
@@ -3313,9 +3158,7 @@ void MainWindow::packAllAsfToMus()
         hideConversionProgressDialog();
         return;
     }
-    qDebug() << "Successfully copied MUS to temp:" << musTempPath;
 
-    qDebug() << "Copying all ASF files to MUS temp directory:";
     for (const QString &asfFileName : filesToConvert) {
         QString asfPath = asfDir + "/" + asfFileName;
         QString asfDestPath = musTempDir + "/" + asfFileName;
@@ -3327,7 +3170,6 @@ void MainWindow::packAllAsfToMus()
             if (!QFile::copy(asfPath, asfDestPath)) {
                 qWarning() << "Failed to copy ASF to temp:" << asfPath << "->" << asfDestPath;
             } else {
-                qDebug() << "Successfully copied ASF to temp:" << asfDestPath;
             }
         }
     }
