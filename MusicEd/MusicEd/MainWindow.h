@@ -47,6 +47,8 @@ private slots:
     void onReplaceMusic();
     void onConvertToASF();
     void onConvertToMUS();
+    void onConvertSingleASFtoWAV();
+    void onOneClickFullConvert();
     void onBackToMain();
     void onHowToUse();
 
@@ -65,7 +67,8 @@ private slots:
     void onConversionProgressCanceled();
 
     void onLanguageChanged(int index);
-    void onFileSelected(QListWidgetItem *item);
+    void onAsfFileSelected(QListWidgetItem *item);
+    void onWavFileSelected(QListWidgetItem *item);
     void onVolumeChanged(int volume);
 
     void onProgressSliderMoved(int position);
@@ -118,6 +121,8 @@ private:
 
     void updateExtractButtonText();
     void updateConvertAllButtonText();
+    void updateSingleConvertButtonText();
+    void updateOneClickConvertButtonText();
     void updateReplaceButtonText();
     void updateConvertToMUSButtonText();
     void updateBackButtonText();
@@ -142,8 +147,11 @@ private:
     QLabel *languageLabel;
     QComboBox *languageComboBox;
 
-    QListWidget *fileListWidget;
+    QListWidget *asfListWidget;
+    QListWidget *wavListWidget;
     QPushButton *convertAllButton;
+    QPushButton *singleConvertButton;
+    QPushButton *oneClickConvertButton;
     QPushButton *playButton;
     QPushButton *stopButton;
     QPushButton *replaceButton;
@@ -186,12 +194,14 @@ private:
     QString wavDir;
     QString txtDir;
     QString currentPlayingFile;
+    QString singleConvertFileName;
     QString currentLanguage;
     QString currentProcessingMpfFile;
 
     int currentConversionIndex;
     int totalConversions;
     QStringList filesToConvert;
+    bool isOneClickMode;
     bool isConverting;
     bool isPlaying;
     bool shouldOverwriteFiles;
@@ -199,3 +209,6 @@ private:
 };
 
 #endif
+
+
+

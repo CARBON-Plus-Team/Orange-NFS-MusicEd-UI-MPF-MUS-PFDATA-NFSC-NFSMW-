@@ -1,0 +1,70 @@
+# Build output
+build/
+build-*/
+release/
+debug/
+x64/
+*.o
+*.obj
+*.moc
+*.qm
+
+# IDE
+.vscode/
+.vs/
+.idea/
+*.user
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.suo
+*.autosave
+.qtcreator/
+
+# OS
+Thumbs.db
+*.lnk
+.DS_Store
+
+# Temp
+*.tmp
+*.log
+*.stash
+
+# ==========================================
+# Project-specific - directories
+# ==========================================
+Beta1.0 BackUp/
+Beta1.0.1 backup/
+Beta1.0.1_优化版/
+Debug/
+Music/
+PFDataCompiler-3.0/
+TEST/
+Toolkit_big_import_export/
+
+# ==========================================
+# Project-specific - top-level files
+# ==========================================
+ONME.exe
+ONME_Setup*.exe
+*.msi
+*.wxs
+setup.iss
+ONME_Setup.iss
+SimpleSetup.wxs
+installer.wxs
+
+# Project-specific - dev docs (private)
+极品飞车10音乐编辑器开发.md
+技术原理说明.md
+项目待办事项.txt
+cover_philosophy.md
+
+# Project-specific - cover images and scripts
+background_oatmeal.png
+promo_cover*.png
+generate_cover*.py
+
+# Workspace
+*.code-workspace

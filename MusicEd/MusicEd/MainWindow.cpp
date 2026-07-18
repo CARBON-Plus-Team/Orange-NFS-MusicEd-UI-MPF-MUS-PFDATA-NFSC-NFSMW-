@@ -45,10 +45,13 @@ MainWindow::MainWindow(QWidget* parent)
     , selectMusButton(nullptr)
     , selectedFileLabel(nullptr)
     , extractButton(nullptr)
+    , oneClickConvertButton(nullptr)
     , languageLabel(nullptr)
     , languageComboBox(nullptr)
-    , fileListWidget(nullptr)
+    , asfListWidget(nullptr)
+    , wavListWidget(nullptr)
     , convertAllButton(nullptr)
+    , singleConvertButton(nullptr)
     , playButton(nullptr)
     , stopButton(nullptr)
     , replaceButton(nullptr)
@@ -90,6 +93,8 @@ MainWindow::MainWindow(QWidget* parent)
     , isPlaying(false)
     , shouldOverwriteFiles(false)
     , hasShownExportComplete(false)
+    , isOneClickMode(false)
+    , singleConvertFileName("")
 {
 
     QDir dir;
@@ -116,7 +121,16 @@ MainWindow::MainWindow(QWidget* parent)
     setupConnections();
     initializeMediaComponents();
 
-    loadLanguage("en");
+    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/NFSMusicEd/settings.ini", QSettings::IniFormat);
+    QString savedLang = settings.value("Language", "en").toString();
+    loadLanguage(savedLang);
+    
+    if (languageComboBox) {
+        int idx = languageComboBox->findData(savedLang);
+        if (idx >= 0) {
+            languageComboBox->setCurrentIndex(idx);
+        }
+    }
 
     checkTools();
     loadLastMusFile();
@@ -445,12 +459,39 @@ void MainWindow::setupMainPage()
     updateExtractButtonText();
     extractButton->setEnabled(false);
 
+    oneClickConvertButton = new QPushButton();
+    updateOneClickConvertButtonText();
+    oneClickConvertButton->setEnabled(false);
+    oneClickConvertButton->setStyleSheet(
+        "QPushButton {"
+        "    background-color: #F97316;"
+        "    color: white;"
+        "    border: 1px solid #F97316;"
+        "    border-radius: 6px;"
+        "    padding: 10px 20px;"
+        "    font-weight: bold;"
+        "    font-size: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #fb923c;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #ea580c;"
+        "}"
+        "QPushButton:disabled {"
+        "    background-color: #a0a0a0;"
+        "    border-color: #a0a0a0;"
+        "    color: #e0e0e0;"
+        "}"
+    );
+
     fileLayout->addLayout(selectLayout);
+    fileLayout->addWidget(oneClickConvertButton);
     fileLayout->addWidget(extractButton);
     
     // 添加说明文本
-    QLabel* instructionLabel = new QLabel(tr("Please select a MUS file. The system will automatically extract the ASF files and related MPF data."));
-    instructionLabel->setProperty("originalText", "Please select a MUS file. The system will automatically extract the ASF files and related MPF data.");
+    QLabel* instructionLabel = new QLabel(tr("Please select a MUS file. Choose 'One-Click Full Convert' to directly get WAV files for editing, or 'Extract ASF Only' to extract ASF files first and convert individually."));
+    instructionLabel->setProperty("originalText", "Please select a MUS file. Choose 'One-Click Full Convert' to directly get WAV files for editing, or 'Extract ASF Only' to extract ASF files first and convert individually.");
     instructionLabel->setWordWrap(true);
     instructionLabel->setStyleSheet("color: #888888; font-size: 12px; margin-top: 10px;");
     fileLayout->addWidget(instructionLabel);
@@ -471,14 +512,12 @@ void MainWindow::setupFileManagementPage()
 
     // Removed File Information section as requested
 
-    // 文件列表区域
+    // 文件列表区域 - 双列显示
     QGroupBox* listGroup = new QGroupBox(tr("Extracted Files"));
     listGroup->setProperty("originalText", "Extracted Files");
-    QVBoxLayout* listLayout = new QVBoxLayout(listGroup);
+    QHBoxLayout* listLayout = new QHBoxLayout(listGroup);
     
-    // 文件列表
-    fileListWidget = new QListWidget();
-    fileListWidget->setStyleSheet(
+    QString listStyle = QString(
         "QListWidget {"
         "    background-color: #FBF7ED;"
         "    border: 1px solid #D9CFB8;"
@@ -522,18 +561,52 @@ void MainWindow::setupFileManagementPage()
         "    background: none;"
         "}"
     );
-    fileListWidget->setIconSize(QSize(20, 20));
-    listLayout->addWidget(fileListWidget);
 
-    QHBoxLayout* countLayout = new QHBoxLayout();
-    asfCountLabel = new QLabel(tr("ASF Files: 0"));
-    asfCountLabel->setProperty("originalText", "ASF Files: 0");
-    wavCountLabel = new QLabel(tr("WAV Files: 0"));
-    wavCountLabel->setProperty("originalText", "WAV Files: 0");
-    countLayout->addWidget(asfCountLabel);
-    countLayout->addStretch();
-    countLayout->addWidget(wavCountLabel);
-    listLayout->addLayout(countLayout);
+    // 左侧：ASF文件列表
+    QVBoxLayout* asfColumnLayout = new QVBoxLayout();
+    QLabel* asfTitleLabel = new QLabel(tr("ASF Files"));
+    asfTitleLabel->setProperty("originalText", "ASF Files");
+    asfTitleLabel->setStyleSheet("font-weight: bold; color: #F97316; font-size: 14px;");
+    asfCountLabel = new QLabel(tr("0 files"));
+    asfCountLabel->setProperty("originalText", "0 files");
+    asfCountLabel->setStyleSheet("color: #888888; font-size: 12px;");
+    QHBoxLayout* asfHeaderLayout = new QHBoxLayout();
+    asfHeaderLayout->addWidget(asfTitleLabel);
+    asfHeaderLayout->addStretch();
+    asfHeaderLayout->addWidget(asfCountLabel);
+    asfColumnLayout->addLayout(asfHeaderLayout);
+    
+    asfListWidget = new QListWidget();
+    asfListWidget->setStyleSheet(listStyle);
+    asfListWidget->setIconSize(QSize(20, 20));
+    asfColumnLayout->addWidget(asfListWidget, 1);
+    listLayout->addLayout(asfColumnLayout, 1);
+
+    // 中间分隔线
+    QFrame* separator = new QFrame();
+    separator->setFrameShape(QFrame::VLine);
+    separator->setStyleSheet("color: #D9CFB8;");
+    listLayout->addWidget(separator);
+
+    // 右侧：WAV文件列表
+    QVBoxLayout* wavColumnLayout = new QVBoxLayout();
+    QLabel* wavTitleLabel = new QLabel(tr("WAV Files"));
+    wavTitleLabel->setProperty("originalText", "WAV Files");
+    wavTitleLabel->setStyleSheet("font-weight: bold; color: #F97316; font-size: 14px;");
+    wavCountLabel = new QLabel(tr("0 files"));
+    wavCountLabel->setProperty("originalText", "0 files");
+    wavCountLabel->setStyleSheet("color: #888888; font-size: 12px;");
+    QHBoxLayout* wavHeaderLayout = new QHBoxLayout();
+    wavHeaderLayout->addWidget(wavTitleLabel);
+    wavHeaderLayout->addStretch();
+    wavHeaderLayout->addWidget(wavCountLabel);
+    wavColumnLayout->addLayout(wavHeaderLayout);
+    
+    wavListWidget = new QListWidget();
+    wavListWidget->setStyleSheet(listStyle);
+    wavListWidget->setIconSize(QSize(20, 20));
+    wavColumnLayout->addWidget(wavListWidget, 1);
+    listLayout->addLayout(wavColumnLayout, 1);
 
     // 播放器控件区域
     setupPlayerControls(managementLayout);
@@ -579,6 +652,11 @@ void MainWindow::setupFileManagementPage()
     replaceButton = new QPushButton();
     updateReplaceButtonText();
     singleOperationLayout->addWidget(replaceButton);
+    
+    singleConvertButton = new QPushButton();
+    updateSingleConvertButtonText();
+    singleConvertButton->setEnabled(false);
+    singleOperationLayout->addWidget(singleConvertButton);
     
     convertToASFButton = new QPushButton(tr("Convert to ASF"));
     convertToASFButton->setProperty("originalText", "Convert to ASF");
@@ -628,6 +706,7 @@ void MainWindow::setupFileManagementPage()
     convertToASFButton->setEnabled(false);
     convertToMUSButton->setEnabled(false);
     convertAllButton->setEnabled(false);
+    singleConvertButton->setEnabled(false);
 }
 
 void MainWindow::setupPlayerControls(QVBoxLayout* parentLayout)
@@ -670,6 +749,8 @@ void MainWindow::setupConnections()
 {
     connect(selectMusButton, &QPushButton::clicked, this, &MainWindow::onSelectMusFile);
     connect(extractButton, &QPushButton::clicked, this, &MainWindow::onExtractMusicFiles);
+    connect(oneClickConvertButton, &QPushButton::clicked, this, &MainWindow::onOneClickFullConvert);
+    connect(singleConvertButton, &QPushButton::clicked, this, &MainWindow::onConvertSingleASFtoWAV);
     connect(convertAllButton, &QPushButton::clicked, this, &MainWindow::onConvertAllASF);
     connect(playButton, &QPushButton::clicked, this, &MainWindow::onPlaySelected);
     connect(stopButton, &QPushButton::clicked, this, &MainWindow::onStopPlayback);
@@ -681,7 +762,8 @@ void MainWindow::setupConnections()
 
     connect(languageComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
         this, &MainWindow::onLanguageChanged);
-    connect(fileListWidget, &QListWidget::itemClicked, this, &MainWindow::onFileSelected);
+    connect(asfListWidget, &QListWidget::itemClicked, this, &MainWindow::onAsfFileSelected);
+    connect(wavListWidget, &QListWidget::itemClicked, this, &MainWindow::onWavFileSelected);
     connect(volumeSlider, &QSlider::valueChanged, this, &MainWindow::onVolumeChanged);
 
     connect(mediaPlayer, &QMediaPlayer::playbackStateChanged,
@@ -697,7 +779,21 @@ void MainWindow::setupConnections()
 void MainWindow::updateExtractButtonText()
 {
     if (extractButton) {
-        extractButton->setText(tr("Extract ASF"));
+        extractButton->setText(tr("Extract ASF Only"));
+    }
+}
+
+void MainWindow::updateOneClickConvertButtonText()
+{
+    if (oneClickConvertButton) {
+        oneClickConvertButton->setText(tr("One-Click Full Convert"));
+    }
+}
+
+void MainWindow::updateSingleConvertButtonText()
+{
+    if (singleConvertButton) {
+        singleConvertButton->setText(tr("Convert Selected ASF to WAV"));
     }
 }
 
@@ -732,14 +828,14 @@ void MainWindow::updateBackButtonText()
 void MainWindow::updateAsfCountLabel(int count)
 {
     if (asfCountLabel) {
-        asfCountLabel->setText(tr("ASF Files: %1").arg(count));
+        asfCountLabel->setText(tr("%1 files").arg(count));
     }
 }
 
 void MainWindow::updateWavCountLabel(int count)
 {
     if (wavCountLabel) {
-        wavCountLabel->setText(tr("WAV Files: %1").arg(count));
+        wavCountLabel->setText(tr("%1 files").arg(count));
     }
 }
 
@@ -765,6 +861,7 @@ void MainWindow::onSelectMusFile()
         currentMusFile = fileName;
         selectedFileLabel->setText(QFileInfo(fileName).fileName());
         extractButton->setEnabled(true);
+        oneClickConvertButton->setEnabled(true);
 
         currentMpfFile = findMatchingMpfFile(fileName);
         if (!currentMpfFile.isEmpty()) {
@@ -796,6 +893,7 @@ void MainWindow::loadLastMusFile()
         currentMusFile = lastMus;
         selectedFileLabel->setText(QFileInfo(lastMus).fileName());
         extractButton->setEnabled(true);
+        oneClickConvertButton->setEnabled(true);
 
         currentMpfFile = findMatchingMpfFile(lastMus);
         if (!currentMpfFile.isEmpty()) {
@@ -813,6 +911,7 @@ void MainWindow::onExtractMusicFiles()
     }
 
     extractButton->setEnabled(false);
+    oneClickConvertButton->setEnabled(false);
     selectMusButton->setEnabled(false);
 
     try {
@@ -830,6 +929,74 @@ void MainWindow::onExtractMusicFiles()
     }
 }
 
+void MainWindow::onOneClickFullConvert()
+{
+    if (currentMusFile.isEmpty() || currentMpfFile.isEmpty()) {
+        QMessageBox::warning(this, tr("Error"), tr("Please select both MUS and MPF files first."));
+        return;
+    }
+
+    isOneClickMode = true;
+
+    extractButton->setEnabled(false);
+    oneClickConvertButton->setEnabled(false);
+    selectMusButton->setEnabled(false);
+
+    try {
+        clearTempFilesExceptBats();
+        ensureAsfDirectoryExists();
+        autoDecompileMpf(currentMpfFile);
+    }
+    catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Error"), QString(tr("Extraction failed: %1")).arg(e.what()));
+        isOneClickMode = false;
+        extractButton->setEnabled(true);
+        oneClickConvertButton->setEnabled(true);
+        selectMusButton->setEnabled(true);
+        return;
+    }
+}
+
+void MainWindow::onConvertSingleASFtoWAV()
+{
+    QListWidgetItem* currentItem = asfListWidget->currentItem();
+    if (!currentItem) {
+        QMessageBox::information(this, tr("Info"), tr("Please select an ASF file from the left list first."));
+        return;
+    }
+
+    QString selectedFile = currentItem->text();
+
+    QString asfPath = asfDir + "/" + selectedFile;
+    if (!QFile::exists(asfPath)) {
+        QMessageBox::information(this, tr("Info"), tr("Selected ASF file not found."));
+        return;
+    }
+
+    ensureWavDirectoryExists();
+
+    QString wavName = QFileInfo(selectedFile).completeBaseName() + ".wav";
+    QString wavPath = wavDir + "/" + wavName;
+
+    if (QFile::exists(wavPath)) {
+        QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Confirm"),
+            tr("WAV file already exists. Overwrite?\n%1").arg(wavName),
+            QMessageBox::Yes | QMessageBox::No);
+        if (reply != QMessageBox::Yes) {
+            return;
+        }
+        QFile::remove(wavPath);
+    }
+
+    singleConvertFileName = selectedFile;
+    filesToConvert.clear();
+    filesToConvert.append(selectedFile);
+    currentConversionIndex = 0;
+
+    showConversionProgressDialog(tr("Converting ASF to WAV"), 1);
+    convertNextASFtoWAV();
+}
+
 void MainWindow::onExtractFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     Q_UNUSED(exitStatus)
@@ -840,21 +1007,34 @@ void MainWindow::onExtractFinished(int exitCode, QProcess::ExitStatus exitStatus
         stackedWidget->setCurrentWidget(fileManagementPage);
         updateFileList();
 
-        // 无论是否已经显示过，都在解包完成时显示成功消息
-        QMessageBox::information(this, tr("Success"),
-            tr("Music file extraction completed! You can now convert ASF files to WAV format for playback and editing."));
+        if (isOneClickMode) {
+            isOneClickMode = false;
+            extractButton->setEnabled(true);
+            oneClickConvertButton->setEnabled(true);
+            selectMusButton->setEnabled(true);
+            hasShownExportComplete = false;
+            appendLog(tr("Extraction completed. Starting full ASF to WAV conversion..."), false);
+            onConvertAllASF();
+        } else {
+            // 无论是否已经显示过，都在解包完成时显示成功消息
+            QMessageBox::information(this, tr("Success"),
+                tr("Music file extraction completed! You can now convert ASF files to WAV format for playback and editing."));
 
-        extractButton->setEnabled(true);
-        selectMusButton->setEnabled(true);
-        
-        // 重置hasShownExportComplete标志，确保下次操作能正确显示消息
-        hasShownExportComplete = false;
+            extractButton->setEnabled(true);
+            oneClickConvertButton->setEnabled(true);
+            selectMusButton->setEnabled(true);
+            
+            // 重置hasShownExportComplete标志，确保下次操作能正确显示消息
+            hasShownExportComplete = false;
+        }
     }
     else {
         QMessageBox::critical(this, tr("Error"),
             tr("Extraction failed with exit code: %1").arg(exitCode));
         extractButton->setEnabled(true);
+        oneClickConvertButton->setEnabled(true);
         selectMusButton->setEnabled(true);
+        isOneClickMode = false;
     }
 
     if (extractProcess) {
@@ -874,7 +1054,9 @@ void MainWindow::onExtractError(QProcess::ProcessError error)
     QMessageBox::critical(this, tr("Error"),
         tr("Extract process error: %1").arg(error));
     extractButton->setEnabled(true);
+    oneClickConvertButton->setEnabled(true);
     selectMusButton->setEnabled(true);
+    isOneClickMode = false;
 
     if (extractProcess) {
         extractProcess->deleteLater();
@@ -984,25 +1166,32 @@ void MainWindow::convertNextASFtoWAV()
 
         if (currentConversionIndex >= filesToConvert.size()) {
 
-            QDir asfDirectory(asfDir);
-            QStringList asfFiles = asfDirectory.entryList(QStringList() << "*.asf", QDir::Files);
+            if (filesToConvert.size() > 1) {
+                QDir asfDirectory(asfDir);
+                QStringList asfFiles = asfDirectory.entryList(QStringList() << "*.asf", QDir::Files);
 
-            int deletedCount = 0;
-            for (const QString& asfFile : asfFiles) {
-                QString filePath = asfDir + "/" + asfFile;
-                if (QFile::remove(filePath)) {
-                    deletedCount++;
-                    qDebug() << "Deleted ASF file:" << asfFile;
+                int deletedCount = 0;
+                for (const QString& asfFile : asfFiles) {
+                    QString filePath = asfDir + "/" + asfFile;
+                    if (QFile::remove(filePath)) {
+                        deletedCount++;
+                        qDebug() << "Deleted ASF file:" << asfFile;
+                    }
                 }
+
+                updateFileList();
+
+                QMessageBox::information(this, tr("Success"),
+                    tr("Converted %1 ASF files to WAV format and deleted %2 original ASF files.")
+                        .arg(filesToConvert.size()).arg(deletedCount));
+
+                convertToMUSButton->setEnabled(false); 
+            } else {
+                updateFileList();
+
+                QMessageBox::information(this, tr("Success"),
+                    tr("Successfully converted %1 to WAV format.").arg(filesToConvert.first()));
             }
-
-            updateFileList();
-
-            QMessageBox::information(this, tr("Success"),
-                tr("Converted %1 ASF files to WAV format and deleted %2 original ASF files.")
-                    .arg(filesToConvert.size()).arg(deletedCount));
-
-            convertToMUSButton->setEnabled(false); 
         }
         return;
     }
@@ -1158,25 +1347,17 @@ void MainWindow::onASFtoWAVConversionFinished(int exitCode, QProcess::ExitStatus
 
 void MainWindow::onPlaySelected()
 {
-    QList<QListWidgetItem*> selectedItems = fileListWidget->selectedItems();
-    if (selectedItems.isEmpty()) {
-        QMessageBox::warning(this, tr("Error"), tr("Please select a file to play."));
+    QListWidgetItem* currentItem = wavListWidget->currentItem();
+    if (!currentItem) {
+        QMessageBox::warning(this, tr("Error"), tr("Please select a WAV file from the right list to play."));
         return;
     }
 
-    QString fileName = selectedItems[0]->text();
-
+    QString fileName = currentItem->text();
     bool isWavFile = fileName.endsWith(".wav", Qt::CaseInsensitive);
-    bool isAsfFile = fileName.endsWith(".asf", Qt::CaseInsensitive);
 
-    if (!isWavFile && !isAsfFile) {
-        QMessageBox::warning(this, tr("Error"), tr("Please select a WAV or ASF file."));
-        return;
-    }
-
-    if (isAsfFile) {
-        QMessageBox::information(this, tr("Info"),
-            tr("ASF files need to be converted to WAV format before playing. Please use the 'Convert All to WAV' button first."));
+    if (!isWavFile) {
+        QMessageBox::warning(this, tr("Error"), tr("Please select a WAV file."));
         return;
     }
 
@@ -1240,7 +1421,8 @@ bool MainWindow::copyResourceToTemp(const QString& resourcePath, const QString& 
 
 void MainWindow::updateFileList() 
 {
-    fileListWidget->clear();
+    asfListWidget->clear();
+    wavListWidget->clear();
 
     QDir wavDirectory(wavDir);
     QStringList wavFiles = wavDirectory.entryList(QStringList() << "*.wav", QDir::Files, QDir::NoSort);
@@ -1262,24 +1444,48 @@ void MainWindow::updateFileList()
     updateAsfCountLabel(asfFiles.size());
     updateWavCountLabel(wavFiles.size());
 
-    for (const QString& file : wavFiles) {
-        fileListWidget->addItem(file);
+    for (const QString& file : asfFiles) {
+        asfListWidget->addItem(file);
     }
 
-    for (const QString& file : asfFiles) {
-        fileListWidget->addItem(file);
+    for (const QString& file : wavFiles) {
+        wavListWidget->addItem(file);
     }
 
     bool hasAsfFiles = !asfFiles.isEmpty();
     bool hasWavFiles = !wavFiles.isEmpty();
 
-    convertAllButton->setEnabled(hasAsfFiles);
-    playButton->setEnabled(hasWavFiles);
-    stopButton->setEnabled(false); 
-    replaceButton->setEnabled(hasWavFiles);
-    convertToASFButton->setEnabled(hasWavFiles);
+    if (isOneClickMode) {
+        convertAllButton->setVisible(false);
+        singleConvertButton->setVisible(false);
+        playButton->setVisible(true);
+        stopButton->setVisible(true);
+        replaceButton->setVisible(true);
+        convertToASFButton->setVisible(true);
+        convertToMUSButton->setVisible(true);
 
-    convertToMUSButton->setEnabled(hasAsfFiles && !isConverting);
+        playButton->setEnabled(hasWavFiles);
+        stopButton->setEnabled(false);
+        replaceButton->setEnabled(hasWavFiles);
+        convertToASFButton->setEnabled(hasWavFiles);
+        convertToMUSButton->setEnabled(hasAsfFiles && !isConverting);
+    } else {
+        convertAllButton->setVisible(true);
+        singleConvertButton->setVisible(true);
+        playButton->setVisible(hasWavFiles);
+        stopButton->setVisible(hasWavFiles);
+        replaceButton->setVisible(hasWavFiles);
+        convertToASFButton->setVisible(hasWavFiles);
+        convertToMUSButton->setVisible(true);
+
+        convertAllButton->setEnabled(hasAsfFiles);
+        singleConvertButton->setEnabled(false);
+        playButton->setEnabled(hasWavFiles);
+        stopButton->setEnabled(false);
+        replaceButton->setEnabled(hasWavFiles);
+        convertToASFButton->setEnabled(hasWavFiles);
+        convertToMUSButton->setEnabled(hasAsfFiles && !isConverting);
+    }
 
     qDebug() << "File list updated. WAV files:" << wavFiles.size() << "ASF files:" << asfFiles.size();
 }
@@ -2049,7 +2255,16 @@ void MainWindow::loadLanguage(const QString& languageCode)
         }
 
         if (languageCode != "en") {
-            loadLanguage("en");
+            QSettings settings(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/NFSMusicEd/settings.ini", QSettings::IniFormat);
+    QString savedLang = settings.value("Language", "en").toString();
+    loadLanguage(savedLang);
+    
+    if (languageComboBox) {
+        int idx = languageComboBox->findData(savedLang);
+        if (idx >= 0) {
+            languageComboBox->setCurrentIndex(idx);
+        }
+    }
         }
     }
 }
@@ -2068,6 +2283,8 @@ void MainWindow::retranslateUI()
     setWindowTitle(tr("Orange NFS MusicEd UI By:Shynian"));
 
     updateExtractButtonText();
+    updateOneClickConvertButtonText();
+    updateSingleConvertButtonText();
     updateConvertAllButtonText();
     updateReplaceButtonText();
     updateConvertToMUSButtonText();
@@ -2219,21 +2436,36 @@ void MainWindow::onVolumeChanged(int volume)
 
 void MainWindow::onBackToMain()
 {
-
     onStopPlayback();
 
-    clearTempFilesExceptBats();
+    QDir wavDirectory(wavDir);
+    if (wavDirectory.exists()) {
+        QStringList files = wavDirectory.entryList(QDir::Files);
+        foreach (const QString& file, files) {
+            QFile::remove(wavDir + "/" + file);
+        }
+    }
 
-    currentMusFile = "";
-    currentMpfFile = "";
-    currentProcessingMpfFile = "";
-    pendingGenerateEventFiles.clear();
-    currentGenerateEventFile = "";
-    currentGenerateEventIdentifier = "";
-    selectedFileLabel->setText(tr("No file selected"));
-    extractButton->setEnabled(false);
+    QDir asfDirectory(asfDir);
+    if (asfDirectory.exists()) {
+        QStringList files = asfDirectory.entryList(QDir::Files);
+        foreach (const QString& file, files) {
+            QFile::remove(asfDir + "/" + file);
+        }
+    }
 
+    QDir musTempDirectory(musTempDir);
+    if (musTempDirectory.exists()) {
+        QStringList files = musTempDirectory.entryList(QDir::Files);
+        foreach (const QString& file, files) {
+            QFile::remove(musTempDir + "/" + file);
+        }
+    }
 
+    isOneClickMode = false;
+    isConverting = false;
+    currentPlayingFile = "";
+    isPlaying = false;
 
     stackedWidget->setCurrentWidget(mainPage);
 }
@@ -2284,18 +2516,22 @@ void MainWindow::onHowToUse()
         "&nbsp;&nbsp;&nbsp;%8</p>"
         "<p><b style='color:#F97316;'>%9</b><br>"
         "&nbsp;&nbsp;&nbsp;%10</p>"
+        "<p><b style='color:#F97316;'>%11</b><br>"
+        "&nbsp;&nbsp;&nbsp;%12</p>"
         "</div>"
     ).arg(
-        tr("Step 1: Extract ASF from MUS"),
-        tr("Click Select MUS File to choose your .mus file. The software will automatically find the matching .mpf file. Then click Extract ASF to unpack all audio files from the MUS archive."),
-        tr("Step 2: Convert ASF to WAV"),
-        tr("In the Extracted Files panel, click Convert All to WAV to convert all ASF files to WAV format. You can then play, edit, or replace WAV files with your own music."),
+        tr("Step 1: Select MUS File"),
+        tr("Click Select MUS File to choose your .mus file. The software will automatically find the matching .mpf file."),
+        tr("Step 2: Choose Conversion Mode"),
+        tr("<b>One-Click Full Convert:</b> One-step MUS to WAV conversion. All files are extracted and converted to WAV format ready for editing. Recommended for most users.<br><b>Extract ASF Only:</b> Extract ASF files first. You can then convert individual ASF files to WAV as needed. Useful when you only need to edit specific tracks."),
         tr("Step 3: Replace Music (optional)"),
         tr("Select a WAV file in the list, click Replace Music, and choose your own WAV file (44100 Hz, 16-bit recommended). The selected file will be replaced."),
         tr("Step 4: Convert WAV back to ASF"),
         tr("After editing, click Convert to ASF to convert all WAV files back to ASF format. Make sure all files are converted before packing."),
         tr("Step 5: Pack back to MUS"),
-        tr("Click Convert to MUS to repack all ASF files back into MUS/MPF format. The original MUS/MPF files will be automatically overwritten. Before overwriting, the original files are backed up with timestamps to the MusBackUp folder located in the same directory as your MUS/MPF files.")
+        tr("Click Convert to MUS to repack all ASF files back into MUS/MPF format. The original MUS/MPF files will be automatically overwritten. Before overwriting, the original files are backed up with timestamps to the MusBackUp folder located in the same directory as your MUS/MPF files."),
+        tr("Tip: Switching Modes"),
+        tr("Click Back to Main to return to the main menu and switch modes. Temporary files are automatically cleared when returning to the main menu.")
     );
 
     QLabel* stepsLabel = new QLabel(steps);
@@ -2329,27 +2565,51 @@ void MainWindow::onLanguageChanged(int index)
     settings.sync();
 }
 
-void MainWindow::onFileSelected(QListWidgetItem* item)
+void MainWindow::onAsfFileSelected(QListWidgetItem* item)
 {
     if (item) {
+        wavListWidget->clearSelection();
         QString fileName = item->text();
-        bool isWavFile = fileName.endsWith(".wav", Qt::CaseInsensitive);
-        bool isAsfFile = fileName.endsWith(".asf", Qt::CaseInsensitive);
 
-        playButton->setEnabled(isWavFile);
-        replaceButton->setEnabled(isWavFile);
-
-        QString filePath;
-        if (isWavFile) {
-            filePath = wavDir + "/" + fileName;
+        playButton->setVisible(false);
+        stopButton->setVisible(false);
+        replaceButton->setVisible(false);
+        convertToASFButton->setVisible(false);
+        if (!isOneClickMode) {
+            singleConvertButton->setVisible(true);
         }
-        else if (isAsfFile) {
-            filePath = asfDir + "/" + fileName;
-        }
+        singleConvertButton->setEnabled(true);
 
+        QString filePath = asfDir + "/" + fileName;
         QFileInfo fileInfo(filePath);
         if (fileInfo.exists()) {
-            qDebug() << "Selected file:" << fileName << "Size:" << fileInfo.size() << "bytes";
+            qDebug() << "Selected ASF file:" << fileName << "Size:" << fileInfo.size() << "bytes";
+        }
+    }
+}
+
+void MainWindow::onWavFileSelected(QListWidgetItem* item)
+{
+    if (item) {
+        asfListWidget->clearSelection();
+        QString fileName = item->text();
+
+        playButton->setVisible(true);
+        stopButton->setVisible(true);
+        replaceButton->setVisible(true);
+        convertToASFButton->setVisible(true);
+        if (!isOneClickMode) {
+            singleConvertButton->setVisible(false);
+        }
+
+        playButton->setEnabled(true);
+        replaceButton->setEnabled(true);
+        convertToASFButton->setEnabled(true);
+
+        QString filePath = wavDir + "/" + fileName;
+        QFileInfo fileInfo(filePath);
+        if (fileInfo.exists()) {
+            qDebug() << "Selected WAV file:" << fileName << "Size:" << fileInfo.size() << "bytes";
         }
     }
 }
@@ -2895,18 +3155,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::onReplaceMusic()
 {
-
-    QList<QListWidgetItem*> sel = fileListWidget->selectedItems();
-    if (sel.isEmpty()) {
-        QMessageBox::warning(this, tr("Error"), tr("Please select a WAV file to replace."));
+    QListWidgetItem* currentItem = wavListWidget->currentItem();
+    if (!currentItem) {
+        QMessageBox::warning(this, tr("Error"), tr("Please select a WAV file from the right list to replace."));
         return;
     }
 
-    QString targetName = sel[0]->text();
-    if (!targetName.endsWith(".wav", Qt::CaseInsensitive)) {
-        QMessageBox::warning(this, tr("Error"), tr("Please select a WAV file."));
-        return;
-    }
+    QString targetName = currentItem->text();
 
     QString src = QFileDialog::getOpenFileName(this, tr("Select replacement"), "", tr("WAV Files (*.wav)"));
     if (src.isEmpty()) return;
@@ -3263,3 +3518,32 @@ void MainWindow::onProgressSliderMoved(int position)
         mediaPlayer->setPosition(p);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -120,31 +120,7 @@ int main(int argc, char *argv[])
     QDir(musTempDir).mkpath(".");
     QDir(txtDir).mkpath(".");
 
-    QSettings settings(appDataDir + "/settings.ini", QSettings::IniFormat);
-
-    QString defaultLanguage = QLocale::system().name().startsWith("zh") ? "zh" : "en";
-    QString language = settings.value("Language", "en").toString(); 
-
-    QTranslator translator;
-    bool translationLoaded = false;
-
-    if (language == "zh") {
-        if (translator.load(":/translations/musicprocessor_zh.qm")) {
-            app.installTranslator(&translator);
-            translationLoaded = true;
-            qDebug() << "Loaded Chinese translation";
-        }
-    } else {
-        if (translator.load(":/translations/musicprocessor_en.qm")) {
-            app.installTranslator(&translator);
-            translationLoaded = true;
-            qDebug() << "Loaded English translation";
-        }
-    }
-
-    if (!translationLoaded) {
-        qWarning() << "Failed to load translation file, using default English";
-    }
+    Q_UNUSED(appDataDir);
 
     bool isAnotherInstanceRunning = false;
 
@@ -210,3 +186,4 @@ int main(int argc, char *argv[])
         return -1;
     }
 }
+
