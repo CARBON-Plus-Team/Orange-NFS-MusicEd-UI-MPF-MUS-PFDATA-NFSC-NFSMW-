@@ -5,7 +5,7 @@
 
 ## <p align="center"><img width="256" height="256" alt="atgki-szyi5" src="https://github.com/user-attachments/assets/6abb763f-9d60-4539-9dd7-bf9213a87f4d" /></p>
 
-## <p align="center"><img width="720" height="480" alt="Orange" src="https://github.com/user-attachments/assets/61f04c64-bb8c-43f2-8ab5-c44c1f5ae12d" /></p>
+## <p align="center"><img width="854" height="480" alt="Orange" src="https://github.com/user-attachments/assets/556bc7d5-323f-410c-a2c8-4d08c84c3d65" /></p>
 
 
 ##### <p align="center">A special thank you to **[YAMADA RYO](https://github.com/orgs/CARBON-Plus-Team/people/LEE-YAMADARYO)**. He’s someone I deeply cherish, and I’m so grateful for his help with ONME.</p> 
