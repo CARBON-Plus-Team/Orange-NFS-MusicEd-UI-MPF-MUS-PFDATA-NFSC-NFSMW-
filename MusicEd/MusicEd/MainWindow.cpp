@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QProcess>
+#include <QSysInfo>
 #include <QDebug>
 #include <QTranslator>
 #include <QLibraryInfo>
@@ -109,12 +110,25 @@ MainWindow::MainWindow(QWidget* parent)
     ensureWavDirectoryExists();
     ensureTxtDirectoryExists();
 
-    copyResourceToTemp(":/tools/convert.bat", "convert.bat");
-    copyResourceToTemp(":/tools/convert_back.bat", "convert_back.bat");
-    copyResourceToTemp(":/tools/MPFmaster.exe", "MPFmaster.exe");
-    copyResourceToTemp(":/tools/sx.exe", "sx.exe");
-    copyResourceToTemp(":/tools/ffmpeg.exe", "ffmpeg.exe");
-    copyResourceToTemp(":/tools/MPFmaster_GenerateEvent.exe", "MPFmaster_GenerateEvent.exe");
+    QString toolsDir = QApplication::applicationDirPath() + "/tools/";
+    qDebug() << "Tools directory:" << toolsDir;
+    qDebug() << "Tools directory exists:" << QDir(toolsDir).exists();
+
+    QStringList toolFiles = {
+        "convert.bat",
+        "convert_back.bat",
+        "MPFmaster.exe",
+        "sx.exe",
+        "ffmpeg.exe",
+        "MPFmaster_GenerateEvent.exe"
+    };
+
+    foreach (const QString& toolFile, toolFiles) {
+        QString srcPath = toolsDir + toolFile;
+        qDebug() << "Copying tool:" << srcPath;
+        bool ok = copyFileToTemp(srcPath, toolFile);
+        qDebug() << "  " << (ok ? "OK" : "FAILED") << "->" << toolFile;
+    }
 
     setupUI();
     applyDarkOrangeTheme();
@@ -671,6 +685,22 @@ void MainWindow::setupPlayerControls(QVBoxLayout* parentLayout)
     playerGroup->setProperty("originalText", "Audio Player");
     QVBoxLayout* playerLayout = new QVBoxLayout(playerGroup);
 
+
+    QHBoxLayout* progressLayout = new QHBoxLayout();
+    currentTimeLabel = new QLabel("00:00");
+    currentTimeLabel->setStyleSheet("font-size: 12px; color: #666; min-width: 40px;");
+    progressSlider = new QSlider(Qt::Horizontal);
+    progressSlider->setRange(0, 100);
+    progressSlider->setValue(0);
+    progressSlider->setMinimumHeight(24);
+    totalTimeLabel = new QLabel("00:00");
+    totalTimeLabel->setStyleSheet("font-size: 12px; color: #666; min-width: 40px;");
+    progressLayout->addWidget(currentTimeLabel);
+    progressLayout->addWidget(progressSlider, 1);
+    progressLayout->addWidget(totalTimeLabel);
+
+    playerLayout->addLayout(progressLayout);
+
     QHBoxLayout* volumeLayout = new QHBoxLayout();
     QLabel* volumeLabel = new QLabel(tr("Volume:"));
     volumeLabel->setProperty("originalText", "Volume:");
@@ -696,6 +726,18 @@ void MainWindow::initializeMediaComponents()
     mediaPlayer->setAudioOutput(audioOutput);
     audioOutput->setVolume(0.5);
 
+    connect(mediaPlayer, &QMediaPlayer::playbackStateChanged,
+        this, &MainWindow::onPlaybackStateChanged);
+    connect(mediaPlayer, &QMediaPlayer::positionChanged,
+        this, &MainWindow::onMediaPositionChanged);
+    connect(mediaPlayer, &QMediaPlayer::durationChanged,
+        this, &MainWindow::onMediaDurationChanged);
+
+    if (progressSlider) {
+        connect(progressSlider, &QSlider::sliderMoved,
+            this, &MainWindow::onProgressSliderMoved);
+    }
+
     progressTimer = new QTimer(this);
     progressTimer->setInterval(100);
     connect(progressTimer, &QTimer::timeout, this, &MainWindow::updatePlaybackProgress);
@@ -720,16 +762,10 @@ void MainWindow::setupConnections()
         this, &MainWindow::onLanguageChanged);
     connect(asfListWidget, &QListWidget::itemClicked, this, &MainWindow::onAsfFileSelected);
     connect(wavListWidget, &QListWidget::itemClicked, this, &MainWindow::onWavFileSelected);
+    if (volumeSlider) {
     connect(volumeSlider, &QSlider::valueChanged, this, &MainWindow::onVolumeChanged);
+    }
 
-    connect(mediaPlayer, &QMediaPlayer::playbackStateChanged,
-        this, &MainWindow::onPlaybackStateChanged);
-    connect(mediaPlayer, &QMediaPlayer::positionChanged,
-        this, &MainWindow::onMediaPositionChanged);
-    connect(mediaPlayer, &QMediaPlayer::durationChanged,
-        this, &MainWindow::onMediaDurationChanged);
-    connect(progressSlider, &QSlider::sliderMoved,
-        this, &MainWindow::onProgressSliderMoved);
 }
 
 
@@ -1289,6 +1325,34 @@ void MainWindow::onStopPlayback()
     mediaPlayer->stop();
     isPlaying = false;
     stopButton->setEnabled(false);
+}
+
+bool MainWindow::copyFileToTemp(const QString& sourcePath, const QString& fileName)
+{
+    QFile sourceFile(sourcePath);
+    if (!sourceFile.exists()) {
+        qWarning() << "Tool file not found:" << sourcePath;
+        return false;
+    }
+
+    QString destPath = tempDir + "/" + fileName;
+
+    if (QFile::exists(destPath)) {
+        QFile::remove(destPath);
+    }
+
+    if (sourceFile.copy(destPath)) {
+#ifndef Q_OS_WIN
+        QFile(destPath).setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+            QFile::ReadGroup | QFile::ExeGroup |
+            QFile::ReadOther | QFile::ExeOther);
+#endif
+        return true;
+    }
+    else {
+        qWarning() << "Failed to copy" << fileName << ":" << sourceFile.errorString();
+        return false;
+    }
 }
 
 bool MainWindow::copyResourceToTemp(const QString& resourcePath, const QString& fileName)
@@ -2776,6 +2840,8 @@ void MainWindow::onGenerateEventError(QProcess::ProcessError error)
 
 void MainWindow::checkTools()
 {
+    qDebug() << "Checking tools in temp directory:" << tempDir;
+
     QStringList requiredTools = {
         tempDir + "/convert.bat",
         tempDir + "/convert_back.bat",
@@ -2785,19 +2851,28 @@ void MainWindow::checkTools()
     };
 
     QStringList missing;
+    QStringList found;
     for (const QString& p : requiredTools) {
         if (!QFile::exists(p)) {
             missing.append(QFileInfo(p).fileName());
+            qDebug() << "  MISSING:" << QFileInfo(p).fileName();
+        } else {
+            found.append(QFileInfo(p).fileName());
+            qDebug() << "  FOUND:" << QFileInfo(p).fileName();
         }
     }
 
+    qDebug() << "Tool check result:" << found.size() << "found," << missing.size() << "missing";
+
     if (!missing.isEmpty()) {
+        qWarning() << "Missing tools:" << missing.join(", ");
         QMessageBox::warning(this, tr("Warning"),
             tr("The following tools are missing or failed to copy:\n%1\n\n"
                 "Some features may not work properly.")
             .arg(missing.join("\n")));
     }
     else {
+        qDebug() << "All required tools are available";
     }
 }
 

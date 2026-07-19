@@ -41,7 +41,9 @@ protected:
 private slots:
     void onSelectMusFile();
     void onExtractMusicFiles();
+    void onOneClickFullConvert();
     void onConvertAllASF();
+    void onConvertSingleASFtoWAV();
     void onPlaySelected();
     void onStopPlayback();
     void onReplaceMusic();
@@ -65,7 +67,8 @@ private slots:
     void onConversionProgressCanceled();
 
     void onLanguageChanged(int index);
-    void onFileSelected(QListWidgetItem *item);
+    void onAsfFileSelected(QListWidgetItem *item);
+    void onWavFileSelected(QListWidgetItem *item);
     void onVolumeChanged(int volume);
 
     void onProgressSliderMoved(int position);
@@ -102,6 +105,7 @@ private:
 
     void packAllAsfToMus();
 
+    bool copyFileToTemp(const QString &sourcePath, const QString &fileName);
     bool copyResourceToTemp(const QString &resourcePath, const QString &fileName);
     void updateFileList();
     void clearTempFiles();
@@ -134,11 +138,15 @@ private:
     QPushButton *selectMusButton;
     QLabel *selectedFileLabel;
     QPushButton *extractButton;
+    QPushButton *oneClickConvertButton;
     QLabel *languageLabel;
     QComboBox *languageComboBox;
 
+    QListWidget *asfListWidget;
+    QListWidget *wavListWidget;
     QListWidget *fileListWidget;
     QPushButton *convertAllButton;
+    QPushButton *singleConvertButton;
     QPushButton *playButton;
     QPushButton *stopButton;
     QPushButton *replaceButton;
@@ -168,6 +176,7 @@ private:
     QProgressDialog *conversionProgressDialog;
     QProgressDialog *unpackProgressDialog;
     QTranslator *appTranslator;
+    QTranslator *qtTranslator;
     QStringList pendingGenerateEventFiles;
     QString currentGenerateEventFile;
     QString currentGenerateEventIdentifier;
@@ -182,6 +191,7 @@ private:
     QString currentPlayingFile;
     QString currentLanguage;
     QString currentProcessingMpfFile;
+    QString singleConvertFileName;
 
     int currentConversionIndex;
     int totalConversions;
@@ -190,6 +200,7 @@ private:
     bool isPlaying;
     bool shouldOverwriteFiles;
     bool hasShownExportComplete;
+    bool isOneClickMode;
 };
 
 #endif

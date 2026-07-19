@@ -10,10 +10,88 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include <QScreen>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
+#include <QSysInfo>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
+
+static QFile* g_logFile = nullptr;
+static QTextStream* g_logStream = nullptr;
+static QString g_logSessionId;
+
+QString generateSessionId()
+{
+    return QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + "_" +
+           QString::number(QCoreApplication::applicationPid());
+}
+
+QString logLevelToString(QtMsgType type)
+{
+    switch (type) {
+    case QtDebugMsg:    return "DEBUG";
+    case QtInfoMsg:     return "INFO";
+    case QtWarningMsg:  return "WARN";
+    case QtCriticalMsg: return "ERROR";
+    case QtFatalMsg:    return "FATAL";
+    default:            return "UNKNOWN";
+    }
+}
+
+void logMessageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
+    QString level = logLevelToString(type);
+    QString sessionId = g_logSessionId;
+    QString source = context.file ? QFileInfo(context.file).fileName() + ":" + QString::number(context.line) : "system";
+
+    QString logLine = QString("[%1] [%2] [%3] [%4] %5\n")
+                          .arg(timestamp, level, sessionId, source, msg);
+
+    if (g_logStream) {
+        (*g_logStream) << logLine;
+        g_logStream->flush();
+    }
+
+    fprintf(stderr, "%s", logLine.toUtf8().constData());
+}
+
+void initFileLogger()
+{
+    g_logSessionId = generateSessionId();
+
+    QString logDir = QApplication::applicationDirPath() + "/Logs";
+    QDir dir;
+    if (!dir.exists(logDir)) {
+        dir.mkpath(logDir);
+    }
+
+    QString logFileName = logDir + "/app_" + g_logSessionId + ".log";
+    g_logFile = new QFile(logFileName);
+    if (g_logFile->open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+        g_logStream = new QTextStream(g_logFile);
+        qInstallMessageHandler(logMessageHandler);
+
+        qDebug().noquote() << "============================================================";
+        qDebug().noquote() << "  Orange NFS MusicEd UI - Application Log";
+        qDebug().noquote() << "============================================================";
+        qDebug().noquote() << QString("Session ID : %1").arg(g_logSessionId);
+        qDebug().noquote() << QString("Log File   : %1").arg(logFileName);
+        qDebug().noquote() << QString("App Dir    : %1").arg(QApplication::applicationDirPath());
+        qDebug().noquote() << QString("OS         : %1").arg(QSysInfo::prettyProductName());
+        qDebug().noquote() << QString("OS Version : %1").arg(QSysInfo::productVersion());
+        qDebug().noquote() << QString("CPU Arch   : %1").arg(QSysInfo::currentCpuArchitecture());
+        qDebug().noquote() << QString("Qt Version : %1").arg(qVersion());
+        qDebug().noquote() << "============================================================";
+        qDebug() << "Logger initialized successfully";
+    } else {
+        delete g_logFile;
+        g_logFile = nullptr;
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -28,6 +106,8 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication app(argc, argv);
+
+    initFileLogger();
 
     QString appIconPath = QApplication::applicationDirPath() + "/app.ico";
     if (QFile::exists(appIconPath)) {
@@ -160,4 +240,3 @@ int main(int argc, char *argv[])
         return -1;
     }
 }
-
